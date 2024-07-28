@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+</head>
+<style>
+  * {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #d4baeb;
+  text-align: center;
+}
+
+.sidebar {
+  height: 100%;
+  width: 250px;
+  min-width: 150px;
+  max-width: 400px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #333;
+  color: #fff;
+  padding-top: 20px;
+  overflow-y: auto;
+  transition: width 0.3s ease;
+  padding-inline: 8px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  padding: 20px;
+  border-bottom: 1px solid #555;
+}
+
+.sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+  background-color: #555;
+}
+
+.content {
+  margin-left: 250px;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .content {
+    margin-left: 0;
+  }
+}
+
+</style>
+<body>
+  <div class="sidebar" id="sidebar">
+    <ul>
+      <!-- <li><a href="/">Home</a></li> -->
+      <!-- <li><a href="#">About</a></li> -->
+      <li><a href="/user/logout" >Log Out</a></li>
+      <!-- <li><a href="#">Contact</a></li> -->
+    </ul>
+  </div>
+  
+  <div class="content" id="content">
+    <h1>Content</h1>
+  </div>
+  
+  </body>
+</body>
+</html>
