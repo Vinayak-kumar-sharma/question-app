@@ -21,8 +21,7 @@ const createQuestion = async (req: Request , res:Response)=>{
 }
 
 const updateQuestion = async (req:Request,res:Response) =>{
-  const {id} = req.params
-  const 
+  const {id} = req.params;
 }
 
 export { createQuestion }

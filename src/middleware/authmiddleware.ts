@@ -3,7 +3,8 @@ import { Request, Response , NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 const authMiddleware = async (req : Request , res : Response ,next : NextFunction) => {
-  const token = req.headers.authorization;
+
+  const token = req.cookies.token;
   if(!token) {
     return res.status(400).json({ message : "Not enoung details."})
   }

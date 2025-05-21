@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 import User from "../model/user"
 
 
-import {Request,Response} from "express"
+import {NextFunction, Request,Response} from "express"
 
 connect()
 
@@ -34,12 +34,12 @@ const loginPage = async (req:Request ,res : Response) => {
     }
     
     const token = jwt.sign(tokenData,"abc+0987654321-xyz",{ expiresIn: '1h' })
-  
+    
     // return res.status(201).cookie('token',token,{ httpOnly : true }).json({
     //   success : true ,
     //   message : "Successfully LoggedIn.",
     // })
-
+    
     return res.status(201).cookie('token',token,{ httpOnly : true }).redirect("/dashboard")
 
   } catch (error) {
@@ -51,7 +51,7 @@ const loginPage = async (req:Request ,res : Response) => {
 const logoutPage = async (req:Request,res:Response) => {
   try {
     
-    const token = req.headers.authorization ;
+    const token = req.cookies.token;
     if(!token) {
       return res.status(400).json({
         success: false,
@@ -63,10 +63,7 @@ const logoutPage = async (req:Request,res:Response) => {
       return res.status(400).json({message:"Token is not verified."})
     }
     res.clearCookie('token')
-    return res.status(200).json({
-      success : true,
-      message : "Logout Successfully"
-    })
+    return res.status(201).cookie('token',token,{ httpOnly : true }).redirect("/")
 
   } catch (error) {
     console.error("Something went wrong:", error);

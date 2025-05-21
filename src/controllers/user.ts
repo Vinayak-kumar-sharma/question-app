@@ -4,10 +4,7 @@ import bcryptjs from "bcryptjs"
 import { connect } from "../dbconfig/db"
 
 connect()
-// const app = 
 
-
-// app.set('view engine','ejs')
 const registerUser = async (req:Request,res:Response)=>{
 
 const { name, email, password } = req.body

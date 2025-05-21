@@ -4,7 +4,7 @@ export async function connect() {
   
   try{
 
-    const connectingString = "mongodb+srv://MongoDB:password@cluster0.8n9ddxk.mongodb.net/question_Db?retryWrites=true&w=majority&appName=Cluster0"
+    const connectingString = MONGODB_URL
 
 
     mongoose.connect(connectingString)

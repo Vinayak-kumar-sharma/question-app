@@ -1,11 +1,12 @@
 import express  from "express";
-import { creatQuiz } from "../controllers/quiz";
+import { creatQuiz, creatQuestion, renderQuiz} from "../controllers/quiz";
 // import { createQuestion } from "../controllers/questions";
 import { authMiddleware } from "../middleware/authmiddleware";
 
 const router = express.Router()
 
+router.get("/create",authMiddleware,renderQuiz)
 router.post("/quiz",authMiddleware,creatQuiz)
-// router.post("/question",authMiddleware,createQuestion)
+router.post("/question",authMiddleware,creatQuestion)
 
 export default router
