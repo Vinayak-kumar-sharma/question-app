@@ -3,6 +3,7 @@ import { Quizzes } from "../model/quiz";
 import { Questions } from "../model/quiz";
 import { connect } from "../dbconfig/db";
 
+
 connect();
 
 const renderQuiz = (req:Request, res:Response)=>{
@@ -11,32 +12,43 @@ const renderQuiz = (req:Request, res:Response)=>{
 
 const creatQuiz = async (req: Request, res: Response) => {
   try {
-    const { quizName, tags, questions } = req.body;
-    const questionIds = [];
-    for (let question of questions) {
-      const newQuestion = await Questions.create({
-        text: question.text,
-        options: question.options,
-        correctAnswer: question.correctAnswer,
-        tags: question.tags
-      });
-      questionIds.push(newQuestion._id);
+    const user = (req as any).user;
+    let { quizName, tags, questions } = req.body;
+
+    if (!Array.isArray(questions)) {
+      questions = [questions];
     }
 
+    tags = tags?.split(',').map((t: string) => t.trim());
+
+    // Prepare all question documents
+    const questionDocs = questions.map((q: any) => ({
+      text: q.text,
+      options: q.options.split(',').map((o: string) => ({ option: o.trim() })),
+      correctAnswer: Number(q.correctAnswer),
+      tags: q.tags?.split(',').map((t: string) => t.trim())
+    }));
+
+    // Insert all questions in one batch
+    const insertedQuestions = await Questions.insertMany(questionDocs);
+    const questionIds = insertedQuestions.map((q) => q._id);
+
+    // Create quiz
     const newQuiz = await Quizzes.create({
       quizName,
       tags,
-      manualQuestions: questionIds, 
+      manualQuestions: questionIds,
+      createdBy: user.userId
     });
 
     res.status(201).json({
       success: true,
       message: 'Quiz created successfully.',
-      quiz: newQuiz,
+      quiz: newQuiz
     });
 
   } catch (error) {
-    console.error('Error creating quiz:', error);
+    console.error('Error creating quiz:');
     res.status(500).json({
       success: false,
       message: 'Error creating quiz.'

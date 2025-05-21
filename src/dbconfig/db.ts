@@ -4,7 +4,7 @@ export async function connect() {
   
   try{
 
-    const connectingString = MONGODB_URL
+    const connectingString = MONGODB_URI
 
 
     mongoose.connect(connectingString)

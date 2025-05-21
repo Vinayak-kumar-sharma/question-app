@@ -10,10 +10,9 @@ const authMiddleware = async (req : Request , res : Response ,next : NextFunctio
   }
   try {
     
-    const verifyToken = jwt.verify(token , "abc+0987654321-xyz")
-
-    next()
-
+    const verifyToken: any = jwt.verify(token, "abc+0987654321-xyz");
+    (req as any).user = verifyToken;
+    next();
   } catch (error) {
     console.error("Token verification failed")
     return res.status(500).json({

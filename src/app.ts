@@ -10,7 +10,7 @@ import { authMiddleware } from "./middleware/authmiddleware"
 
 const app = express()
 
-app.use(urlencoded({extended : false}))
+app.use(urlencoded({extended : true}))
 app.set("view engine",'ejs')
 app.use(cookieParser())
 app.use(express.json())

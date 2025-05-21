@@ -1,111 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a Quiz</title>
-    <style>
-        body {
-            background-color: #F4C2C2; /* Baby pink color */
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        button {
-            background-color: #FF69B4; /* Pink button */
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .question-block {
-            margin-bottom: 20px;
-        }
-        .option-block {
-            margin-bottom: 10px;
-        }
-        .delete-button {
-            background-color: red;
-        }
-    </style>
+  <title>Create Quiz</title>
+  <script>
+    function addQuestion() {
+      const container = document.getElementById('questionsContainer');
+      const index = container.children.length;
+
+      const html = `
+        <div class="question-block">
+          <h3>Question ${index + 1}</h3>
+          
+          <label>Question Text:</label><br>
+          <input name="questions[${index}][text]" required><br>
+
+          <label>Options (comma separated):</label><br>
+          <input name="questions[${index}][options]" required><br>
+
+          <label>Correct Answer (Index):</label><br>
+          <input type="number" name="questions[${index}][correctAnswer]" min="0" required><br>
+
+          <label>Tags (comma separated):</label><br>
+          <input name="questions[${index}][tags]"><br><br>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', html);
+    }
+
+    window.onload = () => {
+      addQuestion(); // Add the first question block by default
+    };
+  </script>
 </head>
 <body>
-    <h1>Create a New Quiz</h1>
-    <form method="POST" action="/v1/quiz">
-        <label>Quiz Name:</label>
-        <input type="text" name="quizName" required>
+  <h1>Create Quiz</h1>
 
-        <label>Tags (comma-separated):</label>
-        <input type="text" name="tags" required>
+  <form action="/v1/quiz" method="POST">
+    <label>Quiz Name:</label><br>
+    <input name="quizName" required><br><br>
 
-        <div id="questions-container">
-            <!-- Dynamic questions will appear here -->
-        </div>
+    <label>Tags (comma separated):</label><br>
+    <input name="tags"><br><br>
 
-        <button type="button" onclick="addQuestion()">+ Add Question</button>
-        <button type="submit">Create Quiz</button>
-    </form>
+    <div id="questionsContainer">
+      <!-- Initial question block will be inserted by JS -->
+    </div>
 
-    <script>
-        let questionIndex = 0;
-
-        // Add a new question block
-        function addQuestion() {
-            const container = document.getElementById('questions-container');
-            const newQuestionBlock = document.createElement('div');
-            newQuestionBlock.classList.add('question-block');
-            newQuestionBlock.setAttribute('data-index', questionIndex);
-
-            newQuestionBlock.innerHTML = `
-                <label>Question ${questionIndex + 1}:</label>
-                <input type="text" name="questions[${questionIndex}][text]" required>
-
-                <div class="options-container" id="options-${questionIndex}">
-                    <label>Options</label>
-                    <div class="option-block">
-                        <input type="text" name="questions[${questionIndex}][options][0][option]" placeholder="Option 1" required>
-                    </div>
-                    <button type="button" onclick="addOption(${questionIndex})">+ Add Option</button>
-                </div>
-
-                <label>Correct Answer (Option Number):</label>
-                <input type="number" name="questions[${questionIndex}][correctAnswer]" required>
-
-                <label>Tags for this question:</label>
-                <input type="text" name="questions[${questionIndex}][tags]">
-
-                <button type="button" class="delete-button" onclick="deleteQuestion(${questionIndex})">🗑️ Delete This Question</button>
-            `;
-
-            container.appendChild(newQuestionBlock);
-            questionIndex++;
-        }
-
-        // Add a new option to the specific question
-        function addOption(questionIndex) {
-            const container = document.getElementById(`options-${questionIndex}`);
-            const currentOptions = container.querySelectorAll('.option-block').length;
-            const newOption = document.createElement('div');
-            newOption.classList.add('option-block');
-            newOption.innerHTML = `
-                <input type="text" name="questions[${questionIndex}][options][${currentOptions}][option]" placeholder="Option ${currentOptions + 1}" required>
-                <button type="button" onclick="deleteOption(${questionIndex}, ${currentOptions})">🗑️</button>
-            `;
-            container.appendChild(newOption);
-        }
-
-        // Delete a specific option
-        function deleteOption(questionIndex, optionIndex) {
-            const container = document.getElementById(`options-${questionIndex}`);
-            const optionBlock = container.querySelectorAll('.option-block')[optionIndex];
-            optionBlock.remove();
-        }
-
-        // Delete the whole question
-        function deleteQuestion(questionIndex) {
-            const questionBlock = document.querySelector(`.question-block[data-index='${questionIndex}']`);
-            questionBlock.remove();
-        }
-    </script>
+    <button type="button" onclick="addQuestion()">Add Another Question</button><br><br>
+    <button type="submit">Create Quiz</button>
+  </form>
 </body>
 </html>
