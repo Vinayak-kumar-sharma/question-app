@@ -10,6 +10,45 @@ const renderQuiz = (req:Request, res:Response)=>{
   res.render("../src/views/pages/createquiz",{questions:[]})
 }
 
+
+const getAllQuizzes = async(req:Request, res:Response)=>{
+  try {
+    const quizzes = await Quizzes.find().select('quizName tags')
+
+    const featuredQuizzes = quizzes.slice(0,2)
+    const otherQuizzes = quizzes.slice(2)
+
+    return res.render('../src/views/pages/getquizzes',{featuredQuizzes, otherQuizzes})
+  } catch (error) {
+    console.log("Error not getting quizzes")
+    return res.status(500).json({
+      error:"Server Error",
+    })
+  }
+}
+
+const getBySlug = async (req:Request, res: Response)=>{
+  try {
+    const slug = req.params.id
+
+    const quiz = await Quizzes.findById({slug}).populate('manualQuestions')
+
+    if(!quiz){
+      return res.status(404).json({
+        success:"false",
+        messgae:"Quiz page not found"
+      })
+    }
+
+    return res.status(201).json({
+      data: quiz
+    })
+
+  } catch (error) {
+    console.log("error from getquizbyslug")
+    return res.status(500).json({error: "Server side error"})
+  }
+}
 const creatQuiz = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
@@ -85,4 +124,4 @@ const creatQuestion = async (req: Request, res: Response) => {
   }
 };
 
-export { creatQuiz, creatQuestion, renderQuiz }
+export { creatQuiz, creatQuestion, renderQuiz, getAllQuizzes, getBySlug }
