@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= quiz.quizName %> | Rapid Fire</title>
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background-color: #121212;
+      color: #f0f0f0;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .question-container {
+      max-width: 700px;
+      margin: auto;
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+
+    h1, h2 {
+      color: #00ffff;
+    }
+
+    .option-button {
+      display: block;
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 1rem;
+      background-color: #292929;
+      border: 2px solid #00ffff;
+      color: white;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .option-button:hover {
+      background-color: #00ffff;
+      color: black;
+    }
+
+    .correct {
+      background-color: #00e676 !important;
+      border-color: #00e676;
+    }
+
+    .wrong {
+      background-color: #ff1744 !important;
+      border-color: #ff1744;
+    }
+
+    .tags {
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: #bbbbbb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="question-container" id="quiz-container">
+    <h1><%= quiz.quizName %></h1>
+    <div class="tags">Tags: <%= quiz.tags.join(', ') %></div>
+
+    <h2 id="question-text"></h2>
+    <div id="options-container"></div>
+
+    <div id="result-message"></div>
+  </div>
+
+  <script>
+    const questions = <%- JSON.stringify(quiz.manualQuestions) %>;
+    let current = 0;
+    const userAnswers = []; // store user answers here
+
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const resultMessage = document.getElementById('result-message');
+
+    function loadQuestion() {
+      const q = questions[current];
+      questionText.innerText = q.text;
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-button';
+        btn.innerText = String.fromCharCode(65 + index) + '. ' + opt.option;
+        btn.onclick = () => handleAnswer(index, q.correctAnswer, btn, q._id);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(selectedIndex, correctIndex, btn, questionId) {
+      if (selectedIndex === correctIndex) {
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('wrong');
+      }
+
+      // Save user's answer for this question
+      userAnswers.push({
+        question_id: questionId,
+        chosen_answer: selectedIndex
+      });
+
+      // Disable all buttons
+      document.querySelectorAll('.option-button').forEach(b => b.disabled = true);
+
+      // Move to next after short delay
+      setTimeout(() => {
+        current++;
+        if (current < questions.length) {
+          loadQuestion();
+        } else {
+          endQuiz();
+        }
+      }, 1000);
+    }
+
+    async function endQuiz() {
+      questionText.innerText = "🎉 You've completed the quiz!";
+      optionsContainer.innerHTML = '';
+
+      // Now send the answers to backend to create report
+      try {
+        const response = await fetch('/v1/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            answers: userAnswers
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          resultMessage.innerText = '✅ Report submitted successfully!';
+        } else {
+          resultMessage.innerText = '⚠️ Failed to submit report.';
+        }
+      } catch (error) {
+        resultMessage.innerText = '❌ Error submitting report.';
+        console.error(error);
+      }
+    }
+
+    // Start the quiz
+    loadQuestion();
+  </script>
+</body>
+
+</body>
+</html>

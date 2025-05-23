@@ -151,6 +151,11 @@
     background: linear-gradient(to right, #ff9800, #ffc107);
     margin-top: 40px;
   }
+  .quiz-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
 </style>
 
   <!-- Hero Section -->
@@ -180,9 +185,10 @@
 
   <!-- 🔥 Featured Quizzes -->
   <section class="featured">
-    <h2>🔥 Featured Quizzes</h2>
-    <div class="quiz-grid">
-      <% featuredQuizzes.forEach(quiz => { %>
+  <h2>🔥 Featured Quizzes</h2>
+  <div class="quiz-grid">
+    <% featuredQuizzes.forEach(quiz => { %>
+      <a href="/v1/<%= quiz._id %>" class="quiz-card-link">
         <div class="quiz-card">
           <h3><%= quiz.quizName %></h3>
           <p class="desc">Featured quiz description here.</p>
@@ -191,15 +197,17 @@
             <span class="xp">XP: 200</span>
           </div>
         </div>
-      <% }); %>
-    </div>
-  </section>
+      </a>
+    <% }); %>
+  </div>
+</section>
 
   <!-- 📚 All Quizzes -->
   <section class="all-quizzes">
     <h2>📚 All Quizzes</h2>
     <div class="quiz-grid">
       <% otherQuizzes.forEach(quiz => { %>
+        <a href="/v1/<%= quiz._id %>" class="quiz-card-link">
         <div class="quiz-card">
           <h3><%= quiz.quizName %></h3>
           <p class="desc">Explore and conquer new topics.</p>
@@ -208,6 +216,7 @@
             <span class="xp">XP: 100</span>
           </div>
         </div>
+        </a>
       <% }); %>
     </div>
   </section>

@@ -5,7 +5,7 @@ const schema = mongoose.Schema
 const questionResultSchema = new schema(
   {
 
-  question_id: { type: schema.Types.ObjectId, ref: 'Question' },
+  question_id: { type: schema.Types.ObjectId, ref: 'Questions' },
   correct_answer: { type: Number, required: true },
   chosen_answer: { type: Number, required: true }
 

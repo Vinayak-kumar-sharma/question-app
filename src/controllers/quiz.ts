@@ -28,11 +28,10 @@ const getAllQuizzes = async(req:Request, res:Response)=>{
 }
 
 const getBySlug = async (req:Request, res: Response)=>{
+   
   try {
-    const slug = req.params.id
-
-    const quiz = await Quizzes.findById({slug}).populate('manualQuestions')
-
+      const quiz_id = req.params.id
+      const quiz = await Quizzes.findById(quiz_id).populate('manualQuestions')
     if(!quiz){
       return res.status(404).json({
         success:"false",
@@ -40,9 +39,7 @@ const getBySlug = async (req:Request, res: Response)=>{
       })
     }
 
-    return res.status(201).json({
-      data: quiz
-    })
+    return res.render('../src/views/pages/rapidfire', { quiz });
 
   } catch (error) {
     console.log("error from getquizbyslug")

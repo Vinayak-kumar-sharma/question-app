@@ -13,12 +13,13 @@ const questionSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+const Questions = mongoose.model('Questions',questionSchema)
 
 const quizSchema = new mongoose.Schema({
   quizName: { type: String, required: true, unique: true },
   tags: [String], 
   questionLimit: { type: Number, default: 10 },
-  manualQuestions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }], 
+  manualQuestions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Questions' }], 
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
   isPublic: { type: Boolean, default: true }, 
   createdAt: { type: Date, default: Date.now }
@@ -26,7 +27,7 @@ const quizSchema = new mongoose.Schema({
 
 
 
-const Questions = mongoose.model('Questions',questionSchema)
+
 
 const Quizzes = mongoose.model('Quizzes',quizSchema)
 
