@@ -5,9 +5,9 @@ import Report from "../model/report"
 
 const createReport = async(req:Request, res:Response)=>{
   try {
-
+    
     const user = (req as any).user.userId; // ✅ from auth middleware
-    const quiz = req.params.Id;
+    const quiz = req.body.quiz;
     const answers = req.body.answers;
 
     const quizDoc = await Quizzes.findById(quiz).populate('manualQuestions');

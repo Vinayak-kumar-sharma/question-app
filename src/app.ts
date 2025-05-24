@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import userrouter from "./routes/user"
 import quizroute from "./routes/quiz"
 import reportroute from "./routes/analytics"
-import { authMiddleware } from "./middleware/authmiddleware"
+
 
 
 const app = express()
@@ -24,9 +24,6 @@ app.get("/signup",(req : Request,res : Response)=>{
 })
 app.get("/login",(req : Request,res : Response)=> {
   res.render('../src/views/pages/login')
-})
-app.get("/dashboard",authMiddleware, (req:Request , res : Response) => {
-  res.render('../src/views/pages/dashboard')
 })
 
 app.use("/user",userrouter)

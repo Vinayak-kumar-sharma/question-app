@@ -40,7 +40,7 @@ const loginPage = async (req:Request ,res : Response) => {
     //   message : "Successfully LoggedIn.",
     // })
     
-    return res.status(201).cookie('token',token,{ httpOnly : true }).redirect("/dashboard")
+    return res.status(201).cookie('token',token,{ httpOnly : true }).redirect("/user/dashboard")
 
   } catch (error) {
     console.log( "Somenthing went wrong..." + error )

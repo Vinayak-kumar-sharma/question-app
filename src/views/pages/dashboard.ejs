@@ -1,94 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #d4baeb;
+    }
+
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #333;
+      color: #fff;
+      padding-top: 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li {
+      padding: 20px;
+      border-bottom: 1px solid #555;
+    }
+
+    .sidebar ul li a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #555;
+    }
+
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .content {
+        margin-left: 0;
+      }
+    }
+
+    table {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background-color: #fff;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    th {
+      background-color: #6f42c1;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    a.button {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 15px;
+      background-color: #6f42c1;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    a.button:hover {
+      background-color: #5a32a3;
+    }
+  </style>
 </head>
-<style>
-  * {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  background-color: #d4baeb;
-  text-align: center;
-}
-
-.sidebar {
-  height: 100%;
-  width: 250px;
-  min-width: 150px;
-  max-width: 400px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: #333;
-  color: #fff;
-  padding-top: 20px;
-  overflow-y: auto;
-  transition: width 0.3s ease;
-  padding-inline: 8px;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar ul li {
-  padding: 20px;
-  border-bottom: 1px solid #555;
-}
-
-.sidebar ul li a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.sidebar ul li a:hover {
-  background-color: #555;
-}
-
-.content {
-  margin-left: 250px;
-  padding: 20px;
-  transition: margin-left 0.3s ease;
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-  }
-  .content {
-    margin-left: 0;
-  }
-}
-
-</style>
 <body>
-  <div class="sidebar" id="sidebar">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
     <ul>
-      <li><a href="/">Home</a></li>
-      <!-- <li><a href="#">About</a></li> -->
-      <li><a href="/user/logout" >Log Out</a></li>
-      <!-- <li><a href="#">Contact</a></li> -->
+      <li><a href="/">🏠 Home</a></li>
+      <li><a href="/v1/create">➕ Create Quiz</a></li>
+      <li><a href="/user/logout">🚪 Log Out</a></li>
     </ul>
   </div>
-  
-  <div class="content" id="content">
-    <h1>Content</h1>
-    <div>
-      <a href="/v1/create">Create Quiz</a>
+
+  <!-- Main Content -->
+  <div class="content">
+    <h1>📊 Your Dashboard</h1>
+
+    <div style="margin: 30px 0;">
+      <p><strong>Total Quizzes Taken:</strong> <%= totalQuizzes %></p>
+      <p><strong>Total Questions Answered:</strong> <%= totalQuestions %></p>
+      <p><strong>Total Correct Answers:</strong> <%= totalCorrect %></p>
+      <p><strong>Average Score:</strong> <%= averageScore %> %</p>
+      <p><strong>Best Score:</strong> <%= bestScore %> %</p>
     </div>
+
+    <h2>📝 Recent Quiz Attempts</h2>
+
+    <% if (recentReports.length === 0) { %>
+      <p>You haven't taken any quizzes yet.</p>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Quiz Title</th>
+            <th>Correct</th>
+            <th>Total</th>
+            <th>Score (%)</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recentReports.forEach(report => { %>
+            <tr>
+              <td><%= report.quiz?.quizName || 'Untitled Quiz' %></td>
+              <td><%= report.quiz_result.correct_answers %></td>
+              <td><%= report.quiz_result.total_questions %></td>
+              <td>
+                <%= ((report.quiz_result.correct_answers / report.quiz_result.total_questions) * 100).toFixed(2) %>
+              </td>
+              <td><%= new Date(report.quiz_date).toLocaleDateString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+
   </div>
-  
-  </body>
+
 </body>
 </html>
